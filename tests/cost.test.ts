@@ -1,0 +1,1 @@
+import {describe,it,expect} from "vitest"; import {execFileSync} from "node:child_process"; describe("cost estimate",()=>it("includes requested scales",()=>{const o=execFileSync("npx",["tsx","scripts/cost-estimate.ts"],{encoding:"utf8"});expect(o).toContain('"households":10000')}));

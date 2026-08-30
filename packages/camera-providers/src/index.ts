@@ -1,0 +1,6 @@
+import type {CameraProvider,CameraDevice,MediaReference} from "../../domain/src/index.js";
+const capabilities={video:true,inboundAudio:false,outboundAudio:false,fullDuplexTalk:false,ptz:false,continuousStreaming:false,eventClips:true};
+export class MockCameraProvider implements CameraProvider { constructor(private fixturesDir="fixtures"){} async listDevices():Promise<CameraDevice[]>{return [{id:"mock-front",provider:"mock",providerDeviceId:"front-door",room:"entryway",capabilities}]}; async subscribeToEvents(){} async getEventMedia(eventId:string):Promise<MediaReference>{ return {providerMediaId:eventId,localPath:`${this.fixturesDir}/person/${eventId}.mp4`}; } }
+/** Official Ring partner/OAuth credentials are required. No undocumented API is used. */
+export class RingCameraProvider implements CameraProvider { async listDevices():Promise<CameraDevice[]>{throw new Error("Ring integration requires approved official developer credentials")}; async subscribeToEvents(){throw new Error("Ring webhook subscription is not configured")}; async getEventMedia(_eventId:string):Promise<MediaReference>{throw new Error("Ring media retrieval is not configured")} }
+export const providerFor=(provider:string):CameraProvider=>provider==="mock"?new MockCameraProvider():new RingCameraProvider();

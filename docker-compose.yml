@@ -1,0 +1,18 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment: { POSTGRES_USER: gaitwatcher, POSTGRES_PASSWORD: gaitwatcher, POSTGRES_DB: gaitwatcher }
+    # 5432 is commonly occupied by a host PostgreSQL installation.
+    ports: ["5433:5432"]
+    healthcheck: { test: ["CMD-SHELL", "pg_isready -U gaitwatcher"], interval: 5s, timeout: 5s, retries: 10 }
+  api:
+    build: .
+    command: sh -c "npx prisma db push && npm run dev"
+    environment: { DATABASE_URL: "postgresql://gaitwatcher:gaitwatcher@postgres:5432/gaitwatcher?schema=public", CV_WORKER_URL: "http://cv-worker:8000" }
+    ports: ["3000:3000"]
+    depends_on: { postgres: { condition: service_healthy }, cv-worker: { condition: service_started } }
+  cv-worker:
+    build: ./services/cv-worker
+    ports: ["8000:8000"]
+    # Development-only fixture access; production media is ephemeral and never mounted or archived.
+    volumes: ["./fixtures:/app/fixtures:ro", "./data/external:/app/data/external:ro"]

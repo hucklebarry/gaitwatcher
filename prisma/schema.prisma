@@ -1,0 +1,117 @@
+generator client {
+ provider = "prisma-client-js"
+}
+datasource db {
+ provider = "postgresql"
+ url = env("DATABASE_URL")
+}
+enum Provider {
+ MOCK
+ RING
+}
+enum EventStatus {
+ QUEUED
+ PROCESSING
+ SUCCEEDED
+ FAILED
+ DEAD_LETTER
+}
+model User {
+ id String @id @default(cuid())
+ email String @unique
+ createdAt DateTime @default(now())
+ memberships CaregiverMembership[]
+}
+model Household {
+ id String @id @default(cuid())
+ name String
+ consentedAt DateTime?
+ createdAt DateTime @default(now())
+ residents Resident[]
+ devices CameraDevice[]
+ memberships CaregiverMembership[]
+}
+model Resident {
+ id String @id @default(cuid())
+ householdId String
+ name String
+ household Household @relation(fields:[householdId],references:[id])
+ observations Observation[]
+}
+model CaregiverMembership {
+ id String @id @default(cuid())
+ userId String
+ householdId String
+ role String @default("caregiver")
+ user User @relation(fields:[userId],references:[id])
+ household Household @relation(fields:[householdId],references:[id])
+ @@unique([userId,householdId])
+}
+model CameraDevice {
+ id String @id
+ householdId String
+ provider Provider
+ providerDeviceId String
+ room String?
+ capabilities Json
+ linkStatus String @default("linked")
+ household Household @relation(fields:[householdId],references:[id])
+ events CameraEvent[]
+ @@unique([provider,providerDeviceId])
+}
+model CameraEvent {
+ id String @id @default(cuid())
+ idempotencyKey String @unique
+ deviceId String
+ provider Provider
+ providerEventId String
+ mediaId String
+ occurredAt DateTime
+ status EventStatus @default(QUEUED)
+ attempts Int @default(0)
+ error String?
+ queuedAt DateTime @default(now())
+ processedAt DateTime?
+ device CameraDevice @relation(fields:[deviceId],references:[id])
+ observation Observation?
+ metrics ProcessingMetrics?
+}
+model Observation {
+ id String @id @default(cuid())
+ residentId String
+ deviceId String
+ eventId String @unique
+ type String
+ confidence Float
+ timestamp DateTime
+ metadata Json
+ resident Resident @relation(fields:[residentId],references:[id])
+ event CameraEvent @relation(fields:[eventId],references:[id])
+ createdAt DateTime @default(now())
+}
+model Alert {
+ id String @id @default(cuid())
+ householdId String
+ observationId String?
+ type String
+ status String @default("open")
+ createdAt DateTime @default(now())
+}
+model ProcessingMetrics {
+ id String @id @default(cuid())
+ eventId String @unique
+ provider Provider
+ mediaBytesDownloaded Int
+ framesDecoded Int
+ framesAnalyzed Int
+ cvProcessingMs Int
+ personDetectionMs Int @default(0)
+ poseInferenceMs Int @default(0)
+ bodyStateClassificationMs Int @default(0)
+ framesSentToPersonDetector Int @default(0)
+ framesSentToPoseModel Int @default(0)
+ totalJobMs Int
+ temporaryBytesRetained Int
+ event CameraEvent @relation(fields:[eventId],references:[id])
+ createdAt DateTime @default(now())
+}
