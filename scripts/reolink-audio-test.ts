@@ -9,12 +9,12 @@ type Settings={host:string;username:string;password:string;audioFile?:string;vol
 
 const codecs=new Set<CodecPreference>(["auto","pcma","pcmu","g726-16","g726-24","g726-32","g726-40","aac"]);
 
-function required(name:string){const value=process.env[name]?.trim();if(!value)throw new Error(`${name} is required`);return value}
+function required(...names:string[]){for(const name of names){const value=process.env[name]?.trim();if(value)return value}throw new Error(`${names.join(" or ")} is required`)}
 function numberSetting(name:string,fallback:number,{min,max}:{min:number;max:number}){const raw=process.env[name];if(raw===undefined||raw==="")return fallback;const value=Number(raw);if(!Number.isFinite(value)||value<min||value>max)throw new Error(`${name} must be between ${min} and ${max}`);return value}
 function settings():Settings{
  const codec=(process.env.REOLINK_AUDIO_CODEC??"auto").toLowerCase() as CodecPreference;
  if(!codecs.has(codec))throw new Error(`REOLINK_AUDIO_CODEC must be one of: ${[...codecs].join(", ")}`);
- return {host:required("REOLINK_HOST"),username:required("REOLINK_USERNAME"),password:required("REOLINK_PASSWORD"),audioFile:process.env.REOLINK_AUDIO_FILE?resolve(process.env.REOLINK_AUDIO_FILE):undefined,volume:numberSetting("REOLINK_AUDIO_VOLUME",0.05,{min:0,max:1}),codec,onvifPort:numberSetting("REOLINK_ONVIF_PORT",8000,{min:1,max:65535}),timeoutMs:numberSetting("REOLINK_TIMEOUT_MS",8000,{min:1,max:86_400_000}),verbose:process.env.REOLINK_AUDIO_VERBOSE==="1"};
+ return {host:required("REOLINK_HOST","REOLINK_LIVING_ROOM_CAMERA_IP"),username:required("REOLINK_USERNAME","REOLINK_LIVING_ROOM_USERNAME"),password:required("REOLINK_PASSWORD","REOLINK_LIVING_ROOM_CAMERA_PASSWORD"),audioFile:process.env.REOLINK_AUDIO_FILE?resolve(process.env.REOLINK_AUDIO_FILE):undefined,volume:numberSetting("REOLINK_AUDIO_VOLUME",0.05,{min:0,max:1}),codec,onvifPort:numberSetting("REOLINK_ONVIF_PORT",8000,{min:1,max:65535}),timeoutMs:numberSetting("REOLINK_TIMEOUT_MS",8000,{min:1,max:86_400_000}),verbose:process.env.REOLINK_AUDIO_VERBOSE==="1"};
 }
 function runFfmpeg(args:string[],stage:string){const result=spawnSync("ffmpeg",args,{encoding:"utf8"});if(result.error)throw new Error(`${stage}: ffmpeg is unavailable (${result.error.message})`);if(result.status!==0)throw new Error(`${stage}: ffmpeg exited ${result.status}${result.stderr?`: ${result.stderr.trim()}`:""}`)}
 function requireFfmpeg(){runFfmpeg(["-version"],"Checking audio tooling")}

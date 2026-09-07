@@ -1,0 +1,24 @@
+[Unit]
+Description=GaitWatcher Home Agent
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=gaitwatcher
+Group=gaitwatcher
+WorkingDirectory=/opt/gaitwatcher
+EnvironmentFile=/etc/gaitwatcher/home-agent.env
+ExecStart=/usr/bin/npm run dev:home-agent
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=full
+ReadWritePaths=/var/lib/gaitwatcher
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

@@ -27,7 +27,7 @@ It is not a permanent raw-video archive, medical diagnostic product, definitive 
 | Coarse body-state evidence | Experimental | `standing`, `sitting`, `floor_level`, `unknown`; not a fall classifier. |
 | Fall-like inference | Deferred | See the explicit decision below. |
 | Presence and room activity | Next core product work | Presence episodes are implemented; routine baseline and deviations follow. |
-| Interactive audio | Current hardware spike | Audio Spike 1 is the next immediate milestone. |
+| Interactive audio | Local hardware proof complete | Reolink E1 Pro local prerecorded playback and practical duplex are physically confirmed. Echo/bleed is present and live-talk echo control remains future work. |
 | Gait/mobility trends | Future / qualified camera only | Enable only where lower-body viewpoint geometry is sufficient. |
 | Robot/mobile hardware | Future / evidence-dependent | Consider only if fixed sensors leave important gaps. |
 
@@ -69,9 +69,13 @@ The domain capability metadata already has a small provider-owned representation
 - **Alexa/Echo/speakers:** possible future reminder/interaction integration, not current implementation scope.
 - **Robot:** deferred and contingent on evidence that fixed sensors leave unresolved needs.
 
-## Next immediate task: Audio Spike 1
+## Audio spike results
 
-Determine whether GaitWatcher can programmatically send arbitrary audio through the physical Reolink camera speaker. Answer: local reachability; exact model/firmware; official and local interfaces; arbitrary-audio support; required outbound codec/container; full-duplex versus push-to-talk; cloud/app dependency; and measured end-to-end latency.
+The physical Reolink E1 Pro supports programmatic local speaker playback from GaitWatcher through the standards-based ONVIF/RTSP backchannel. A generated tone and prerecorded speech were successfully sent to the speaker. The negotiated outbound codec was PCMU at 8 kHz.
+
+Incoming microphone audio was simultaneously captured while speaker playback occurred, and manual review confirmed developer speech in the recordings. Practical duplex is therefore confirmed. Speaker-to-microphone bleed/acoustic echo is present; echo-cancellation quality remains uncharacterized. Do not block prerecorded reminder playback on echo suppression. Treat it as a requirement before enabling live caregiver talk or AI conversation.
+
+The next implementation milestone is a small Home Agent interaction adapter around this proven local path; it must remain separate from the existing perception pipeline while sharing the same future deployment boundary and device identity.
 
 The narrow implementation target is:
 

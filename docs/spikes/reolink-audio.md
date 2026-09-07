@@ -75,8 +75,36 @@ Interpret results narrowly:
 
 ## Results
 
-Status: **not yet run against the physical camera from this repository.** The harness was type-checked and its missing-configuration guard was exercised; physical speaker output is intentionally not part of CI. Record the observed speaker result, negotiated codec, elapsed time, and any dropout/reliability notes here after a manual run.
+### Audio Spike 1: outbound tone
+
+**Succeeded.** On the exact target hardware, the generated one-second tone was physically audible from the built-in speaker. The standards-based path negotiated `PCMU/8000` (RTP payload type `0`) and sent 25 paced RTP packets. This establishes that GaitWatcher can produce arbitrary local speaker audio without Reolink cloud/P2P connectivity.
+
+### Audio Spike 2: speech, capture, and reconnect
+
+The `reolink:audio-duplex-test` command is an opt-in integration harness. It resolves the camera stream through ONVIF, uses FFmpeg to record the incoming RTSP audio into one persistent WAV per session, starts a prerecorded speech clip one second into the capture using the existing outbound harness, then closes both paths and repeats.
+
+```bash
+REOLINK_AUDIO_FILE=/absolute/path/to/gaitwatcher-audio-test.wav \
+npm run reolink:audio-duplex-test
+```
+
+The default run is three ten-second sessions separated by two seconds. Override `REOLINK_CAPTURE_SECONDS`, `REOLINK_DUPLEX_SESSIONS`, `REOLINK_DUPLEX_GAP_SECONDS`, and `REOLINK_CAPTURE_DIR` when needed. By default each run has a clean directory at `data/local/reolink-audio/<timestamp>/`, containing `outbound-speech.wav`, every `session-*-microphone.wav`, and `report.json`. This directory is Git-ignored; play the WAVs with the platform audio player or FFmpeg.
+
+Automated initial run results:
+
+| Measure | Result |
+| --- | --- |
+| Speech path | Backchannel negotiated `PCMU/8000`; 56 packets sent per 2.2-second spoken clip. |
+| Inbound capture | Three mono PCM WAVs, reported by FFmpeg as 16 kHz and approximately 9.2–9.3 seconds each. |
+| Reconnect reliability | 3/3 connect → simultaneous capture/play → close cycles succeeded; no stuck session or recorded failure. |
+| Simultaneous inbound/outbound | **Physically confirmed.** The microphone recordings contain developer speech while the E1 Pro speaker plays the outbound clip. |
+| Practical duplex | **Confirmed.** Both directions are usable simultaneously for this local experiment. |
+| Speaker-to-microphone bleed / acoustic echo | **Present.** The microphone recordings also contain some of the camera's own speaker playback. |
+| Echo cancellation quality | **Insufficiently characterized.** It is not a release gate for prerecorded reminders, but is a future requirement for live caregiver talk or AI conversation. |
+| Audible-start and conversational latency | **Not yet measured.** The current reports measure completed session duration, not acoustic arrival time. |
+
+The recorded WAVs are temporary local validation artifacts, not GaitWatcher media retention. Do not commit them or route them into the observation pipeline.
 
 ## Next narrow experiment
 
-If a tone is audible, repeat with a short spoken WAV and measure start-to-audible latency several times. If the standard backchannel is absent or fails, capture the script's redacted failure category and compare its ONVIF profile/SDP evidence with a mature client such as GStreamer's ONVIF-backchannel support before considering any Reolink-specific protocol work.
+The next narrow step is to promote this proven local prerecorded-audio path into a small Home Agent interaction adapter. Separately measure acoustic start latency with an audible reference. Do not make echo suppression a prerequisite for reminder playback; evaluate it before enabling live caregiver talk or AI conversation.

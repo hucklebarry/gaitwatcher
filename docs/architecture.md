@@ -22,7 +22,7 @@ Only validation, authorization and enqueueing are synchronous. The worker is at-
 
 Perception owns decoding, person/pose detection, short-term within-clip tracking, and conservative body-state evidence. It does not identify residents from a box, diagnose conditions, or issue an emergency/fall claim. The semantic domain owns durable, provider-neutral facts such as presence evidence and room-level episodes. The future intelligence layer will derive routine baselines, deviations, and caregiver summaries from those facts rather than asking an LLM to perceive video frame by frame.
 
-The future interaction boundary is deliberately not implemented yet:
+The interaction boundary now has a minimal development-only Home Agent proof:
 
 ```text
 caregiver intelligence / scheduler / caregiver command
@@ -31,5 +31,7 @@ caregiver intelligence / scheduler / caregiver command
         → shared household device + room
         → Reolink, audio node, or future hardware
 ```
+
+`ReolinkInteractiveDevice` currently exposes only fixed, prerecorded `playMessage(messageId)` playback for the validated hardware. The Home Agent initiates its outbound control-service connection; credentials and local camera protocols stay inside the home. See [the remote-control proof](spikes/home-agent-remote-control.md).
 
 The existing capability object (`video`, inbound/outbound audio, full-duplex talk, PTZ, streaming, and event clips) is provider-owned metadata, not a promise that any vendor supports a feature. Audio Spike 1 must verify a concrete Reolink model and firmware before an interaction-provider interface or protocol abstraction is added. Ring remains replaceable behind the provider boundary and must not be assumed to permit application-controlled outbound speaker audio.

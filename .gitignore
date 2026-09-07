@@ -9,4 +9,5 @@ fixtures/**/*.mov
 fixtures/**/*.mts
 fixtures/**/*.MTS
 data/external/
+data/local/reolink-audio/
 prisma/dev.db

@@ -13,7 +13,7 @@ POST `/v1/events` with `{ "provider":"mock", "providerEventId":"person-demo", "d
 
 ## Commands
 
-`npm run test` · `npm run load-test` · `npm run benchmark` · `npm run benchmark:temporal` · `npm run cost-estimate` · `npm run reolink:audio-test`
+`npm run test` · `npm run load-test` · `npm run benchmark` · `npm run benchmark:temporal` · `npm run cost-estimate` · `npm run reolink:audio-test` · `npm run reolink:audio-duplex-test`
 
 For the downloaded, non-commercial URFD evaluation subset: `python3 scripts/prepare-urfd-subset.py` then `BENCHMARK_ROOT=data/external/urfd/benchmark npm run benchmark`. See `data/README.md` for licensing and the intentionally narrow label mapping.
 
