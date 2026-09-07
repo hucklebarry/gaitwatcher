@@ -11,11 +11,14 @@ export class ReolinkInteractiveDevice implements InteractiveDevice{
  readonly id:string; private host:string;private user:string;private pass:string;private onvifPort:number;
  constructor(){this.id=env("HOME_AGENT_DEVICE_ID","REOLINK_DEVICE_ID");this.host=env("REOLINK_HOST","REOLINK_LIVING_ROOM_CAMERA_IP");this.user=env("REOLINK_USERNAME","REOLINK_LIVING_ROOM_USERNAME");this.pass=env("REOLINK_PASSWORD","REOLINK_LIVING_ROOM_CAMERA_PASSWORD");this.onvifPort=Number(process.env.REOLINK_ONVIF_PORT??8000)}
  async playMessage(messageId:MessageId,onStatus:(status:InteractionStatus)=>void){
-  const file=messageFiles[messageId], deviceUrls=[`http://${this.host}:${this.onvifPort}/onvif/device_service`];
+  const fixture=resolve(dirname(fileURLToPath(import.meta.url)),"../../..",messageFiles[messageId]);
+  await this.playAudioFile(fixture,onStatus);
+ }
+ async playAudioFile(file:string,onStatus:(status:InteractionStatus)=>void){
+  const deviceUrls=[`http://${this.host}:${this.onvifPort}/onvif/device_service`];
   const stream=(await getStreamUris({host:this.host,user:this.user,pass:this.pass,deviceUrls,timeoutMs:Number(process.env.REOLINK_TIMEOUT_MS??8000)}))[0];
   if(!stream)throw new Error("camera did not return an RTSP stream URI");
   onStatus("camera_playback_started");
-  const fixture=resolve(dirname(fileURLToPath(import.meta.url)),"../../..",file);
-  await playFile({host:stream.uri,user:this.user,pass:this.pass,file:fixture,volume:Number(process.env.REOLINK_AUDIO_VOLUME??0.05),codec:"auto"});
+  await playFile({host:stream.uri,user:this.user,pass:this.pass,file,volume:Number(process.env.REOLINK_AUDIO_VOLUME??0.05),codec:"auto"});
  }
 }

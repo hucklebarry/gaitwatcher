@@ -1,3 +1,4 @@
 import {describe,expect,it} from "vitest";
-import {isMessageId,messageCatalog} from "@gaitwatcher/shared";
+import {isAudioContentType,isMessageId,messageCatalog} from "@gaitwatcher/shared";
 describe("interaction message catalog",()=>{it("accepts only committed message IDs",()=>{expect(Object.keys(messageCatalog)).toEqual(["audio_test","lunch_reminder","walk_reminder","family_checkin"]);expect(isMessageId("lunch_reminder")).toBe(true);expect(isMessageId("../secret.wav")).toBe(false);expect(isMessageId("anything")).toBe(false)})});
+describe("custom audio contract",()=>{it("allows browser recorder formats, not arbitrary uploads",()=>{expect(isAudioContentType("audio/webm")).toBe(true);expect(isAudioContentType("audio/webm;codecs=opus")).toBe(true);expect(isAudioContentType("audio/mp4")).toBe(true);expect(isAudioContentType("audio/wav")).toBe(true);expect(isAudioContentType("video/webm")).toBe(false);expect(isAudioContentType("application/octet-stream")).toBe(false)})});

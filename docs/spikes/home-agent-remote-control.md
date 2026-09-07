@@ -8,7 +8,7 @@ This development proof connects a remote browser to the Home Agent by way of a t
 remote browser → test-control service → outbound Home Agent WebSocket → Reolink E1 Pro speaker
 ```
 
-The control service accepts only a fixed message ID. The Home Agent owns the local Reolink credentials and resolves that ID to a committed prerecorded MP3 fixture. It is deliberately beside—not inside—the existing perception/CV pipeline. Both belong in the future Home Agent deployment boundary and will eventually share household/device identity, but neither changes the current observation pipeline.
+The control service accepts fixed message IDs and can store short caregiver browser recordings in private object storage. The Home Agent owns the local Reolink credentials, resolves fixture IDs locally, and downloads a short-lived signed URL for a custom recording only at playback time. It is deliberately beside—not inside—the existing perception/CV pipeline. Both belong in the future Home Agent deployment boundary and will eventually share household/device identity, but neither changes the current observation pipeline.
 
 ## What is proven locally
 
@@ -30,6 +30,12 @@ Only these development fixtures may be requested:
 | `family_checkin` | `fixtures/audio/family-checkin.mp3` |
 
 No remote request can provide a filesystem path or arbitrary speech.
+
+## Custom caregiver recordings
+
+The Cloud page can record a short voice message with browser `MediaRecorder`, name it, save it, play it, and delete it. Saved audio lives only in private S3-compatible object storage; the browser has a short signed upload URL and the Pi has a separate short signed download URL. Cloud does not know any Reolink protocol or camera credential. The Pi writes the downloaded audio to a temporary file solely for the existing adapter/FFmpeg playback path and removes it after playback.
+
+This path is intended for reminder playback, not live caregiver talk or AI conversation. Delete blocks new playback requests; the Home Agent intentionally has no persistent custom-audio cache.
 
 ## Start the local proof
 
