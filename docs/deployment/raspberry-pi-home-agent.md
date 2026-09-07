@@ -65,6 +65,8 @@ HOME_AGENT_RECONNECT_MS=5000
 
 Run this on the Pi, on the same LAN as the E1 Pro. It must succeed before continuing:
 
+The Home Agent workspace explicitly loads `/opt/gaitwatcher/.env` by default, so a root-level repo `.env` is correct even though npm starts the workspace from `apps/home-agent`. Set `HOME_AGENT_ENV_FILE` only when using a different absolute path.
+
 ```bash
 cd /opt/gaitwatcher
 set -a; source /etc/gaitwatcher/home-agent.env; set +a

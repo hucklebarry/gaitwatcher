@@ -1,7 +1,11 @@
-import "dotenv/config";
+import {config as loadEnv} from "dotenv";
+import {fileURLToPath} from "node:url";
+import {dirname,resolve} from "node:path";
 import WebSocket from "ws";
 import {ReolinkInteractiveDevice} from "@gaitwatcher/interaction";
 import {isMessageId,type InteractionStatus} from "@gaitwatcher/shared";
+
+loadEnv({path:process.env.HOME_AGENT_ENV_FILE??resolve(dirname(fileURLToPath(import.meta.url)),"../../..",".env")});
 
 const cloudUrl=process.env.HOME_AGENT_CLOUD_URL;
 const agentId=process.env.HOME_AGENT_ID;
