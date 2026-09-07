@@ -1,0 +1,11 @@
+{
+  "annotationRules": "Expectation values are expected, not_expected, viewpoint_dependent, or not_applicable. Unknown local clips must not be assigned activity semantics without consent and reviewer annotation.",
+  "clips": [
+    {"id":"urfd_fall_01_cam0","path":"data/external/urfd/temporal/fall-01-cam0-rgb.mp4","activity":"staged_fall_reference","kind":"fall_like","viewpoint":"low_or_tabletop","source":"URFD official RGB archive","consentStatus":"authorized_research_dataset","expectations":{"rapid_downward_motion_candidate":"expected","horizontal_box":"expected","persistent_low_position":"viewpoint_dependent"}},
+    {"id":"local_person_00004","path":"fixtures/person/00004.MTS","activity":"unannotated_person_fixture","kind":"unknown","viewpoint":"unknown","source":"local fixture","consentStatus":"unverified_metadata","expectations":{}},
+    {"id":"local_person_00016","path":"fixtures/person/00016.MTS","activity":"unannotated_person_fixture","kind":"unknown","viewpoint":"unknown","source":"local fixture","consentStatus":"unverified_metadata","expectations":{}},
+    {"id":"local_no_person_00003","path":"fixtures/no_person/00003.MTS","activity":"no_person_fixture","kind":"environmental_negative","viewpoint":"unknown","source":"local fixture","consentStatus":"unverified_metadata","expectations":{"rapid_downward_motion_candidate":"not_expected","horizontal_box":"not_expected","persistent_low_position":"not_expected"}},
+    {"id":"local_no_person_00106","path":"fixtures/no_person/00106.MTS","activity":"no_person_fixture","kind":"environmental_negative","viewpoint":"unknown","source":"local fixture","consentStatus":"unverified_metadata","expectations":{"rapid_downward_motion_candidate":"not_expected","horizontal_box":"not_expected","persistent_low_position":"not_expected"}},
+    {"id":"local_no_person_00107","path":"fixtures/no_person/00107.MTS","activity":"no_person_fixture","kind":"environmental_negative","viewpoint":"unknown","source":"local fixture","consentStatus":"unverified_metadata","expectations":{"rapid_downward_motion_candidate":"not_expected","horizontal_box":"not_expected","persistent_low_position":"not_expected"}}
+  ]
+}

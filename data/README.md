@@ -13,6 +13,12 @@ External media is benchmark-only; GaitWatcher does not train or fine-tune models
 - Preparation: `python3 scripts/prepare-urfd-subset.py` extracts up to 12 individually annotated ground-pose stills to `data/external/urfd/benchmark/floor_level/`. Only CSV label `1` is mapped to `floor_level`; `0` (transition) and `-1` (not lying) are excluded. This is not a fall benchmark and provides no standing/sitting labels.
 - Run: `BENCHMARK_ROOT=data/external/urfd/benchmark npm run benchmark`.
 
+## Prompt 2.3 temporal sequence
+
+`data/external/urfd/temporal/fall-01-cam0-rgb.mp4` is derived locally from the same official URFD RGB ZIP for detector/tracker diagnostics only. It is a single staged fall sequence and must not be treated as a complete fall benchmark or used to train a model. Run it through the local worker with `sampleFps` and `invokePose:false` to measure pose-independent boxes and tracks.
+
+See `docs/external-temporal-corpus-assessment.md` before adding third-party temporal media. The current external-source assessment found no automatically downloadable, legally clear RGB-video corpus that materially expands household lookalikes.
+
 UP-Fall, Le2i, and CASIA-B are not adapters yet. Their access and licensing vary; CASIA-B commonly requires registration. Do not bypass those controls. These datasets feature staged or research-subject events and are not representative evidence for elderly real-world falls.
 
 ## Other candidates assessed on 2026-08-30

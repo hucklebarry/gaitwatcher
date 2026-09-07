@@ -37,6 +37,7 @@ model Resident {
  name String
  household Household @relation(fields:[householdId],references:[id])
  observations Observation[]
+ presenceEpisodes PresenceEpisode[]
 }
 model CaregiverMembership {
  id String @id @default(cuid())
@@ -57,6 +58,7 @@ model CameraDevice {
  linkStatus String @default("linked")
  household Household @relation(fields:[householdId],references:[id])
  events CameraEvent[]
+ presenceEpisodes PresenceEpisode[]
  @@unique([provider,providerDeviceId])
 }
 model CameraEvent {
@@ -85,9 +87,32 @@ model Observation {
  confidence Float
  timestamp DateTime
  metadata Json
+ presenceEpisodeId String?
+ presenceEpisode PresenceEpisode? @relation(fields:[presenceEpisodeId],references:[id])
  resident Resident @relation(fields:[residentId],references:[id])
  event CameraEvent @relation(fields:[eventId],references:[id])
  createdAt DateTime @default(now())
+}
+model PresenceEpisode {
+ id String @id @default(cuid())
+ residentId String
+ deviceId String
+ room String?
+ startTime DateTime
+ endTime DateTime
+ confidence Float
+ positiveSamples Int
+ confirmed Boolean @default(false)
+ negativeSamples Int @default(0)
+ maxDetectionCount Int @default(1)
+ multiplePeopleSeen Boolean @default(false)
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ resident Resident @relation(fields:[residentId],references:[id])
+ device CameraDevice @relation(fields:[deviceId],references:[id])
+ observations Observation[]
+ @@index([residentId,startTime])
+ @@index([deviceId,endTime])
 }
 model Alert {
  id String @id @default(cuid())

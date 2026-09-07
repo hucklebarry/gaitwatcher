@@ -1,6 +1,6 @@
-# GaitWatcher MVP
+# GaitWatcher
 
-Provider-neutral elder-care monitoring vertical slice: `mock event → queue → CV → observation → caregiver timeline`.
+GaitWatcher is an aging-in-place caregiver intelligence platform. It uses commodity smart-home devices to turn temporary media and device events into privacy-conscious semantic observations, then (over time) into routine-aware caregiver information and resident interaction. It is a wellness/informational product direction, not a diagnostic system or emergency-service replacement.
 
 ## Run
 
@@ -13,10 +13,20 @@ POST `/v1/events` with `{ "provider":"mock", "providerEventId":"person-demo", "d
 
 ## Commands
 
-`npm run test` · `npm run load-test` · `npm run benchmark` · `npm run cost-estimate`
+`npm run test` · `npm run load-test` · `npm run benchmark` · `npm run benchmark:temporal` · `npm run cost-estimate` · `npm run reolink:audio-test`
 
 For the downloaded, non-commercial URFD evaluation subset: `python3 scripts/prepare-urfd-subset.py` then `BENCHMARK_ROOT=data/external/urfd/benchmark npm run benchmark`. See `data/README.md` for licensing and the intentionally narrow label mapping.
 
-The current CV container uses deterministic fixture-label detection for a fully offline mock path. Install and use an approved lightweight YOLO runtime in that service before treating results as CV accuracy. Ring remains credential-gated; see `docs/ring-integration.md`.
+The CV worker has real local YOLO person detection and an offline mock-provider fixture path. Fixture behavior and public benchmark results do not establish deployment accuracy. Ring remains credential-gated; see [Ring integration](docs/ring-integration.md).
 
-Pose/body-state is documented in `docs/pose-and-body-state.md`. The implementation uses a conservative `standing` / `sitting` / `floor_level` / `unknown` contract; `floor_level` is not a fall label.
+## Architecture and project context
+
+The active path is `provider → event/media pipeline → perception → semantic domain/persistence → future routine intelligence → caregiver and interaction experiences`. The same household-scoped device and room model will support both observation and future interaction; audio is not a separate project.
+
+- [Architecture](docs/architecture.md) explains the system boundaries and shared device seam.
+- [Project state and roadmap](docs/project-state.md) is the canonical status, strategy, and next-work document.
+- [CV and fall-like evaluation findings](docs/cv-perception-findings.md) preserves the benchmark decisions and limitations.
+- [Data and privacy flow](docs/data-flow.md), [validation](docs/validation.md), and [external dataset guidance](data/README.md) cover supporting operational detail.
+- [Reolink outbound-audio spike](docs/spikes/reolink-audio.md) documents the opt-in local hardware experiment.
+
+The body-state contract is `standing` / `sitting` / `floor_level` / `unknown`. **`floor_level != fall`**; fall-like inference is intentionally deferred.

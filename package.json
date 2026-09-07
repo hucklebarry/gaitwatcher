@@ -11,8 +11,10 @@
     "seed": "tsx scripts/seed.ts",
     "load-test": "tsx scripts/load-test.ts",
     "benchmark": "tsx scripts/benchmark.ts",
+    "benchmark:temporal": "tsx scripts/temporal-benchmark.ts",
+    "reolink:audio-test": "tsx scripts/reolink-audio-test.ts",
     "cost-estimate": "tsx scripts/cost-estimate.ts"
   },
-  "dependencies": {"@fastify/cors":"^11.1.0","@prisma/client":"6.6.0","dotenv":"^16.5.0","fastify":"^5.3.2","react":"^19.1.0","react-dom":"^19.1.0"},
+  "dependencies": {"@fastify/cors":"^11.1.0","@prisma/client":"6.6.0","dotenv":"^16.5.0","fastify":"^5.3.2","react":"^19.1.0","react-dom":"^19.1.0","rtsp-backchannel":"^0.3.1"},
   "devDependencies": {"@types/node":"^22.15.3","@types/react":"^19.1.2","@types/react-dom":"^19.1.2","@vitejs/plugin-react":"5.0.4","prisma":"6.6.0","tsx":"^4.19.3","typescript":"^5.8.3","vite":"^6.3.3","vitest":"^3.1.3"}
 }
