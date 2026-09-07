@@ -9,7 +9,7 @@ This deploys the existing Node-based Home Agent on a Raspberry Pi 3 running Rasp
 | Node | `rtsp-backchannel` requires Node.js 22 or newer. Use Node 22 on ARM64. |
 | npm modules | `rtsp-backchannel`, `ws`, and their dependencies are JavaScript; no native addon or Mac binary is used by the Home Agent. |
 | FFmpeg | Required on `PATH` by `rtsp-backchannel` to transcode WAV input. Raspberry Pi OS provides it through `apt`. |
-| Filesystem | Home Agent reads committed `fixtures/audio/*.wav`; audio-spike temporary files use Node's portable temp directory. |
+| Filesystem | Home Agent reads four committed `fixtures/audio/*.mp3` messages (about 36 KB total); audio-spike temporary files use Node's portable temp directory. |
 | macOS commands | `say` was only used once on the Mac to create committed development fixtures. It is not invoked by the Home Agent or Pi setup. |
 | CPU/RAM | No Pi measurement has been taken. The Home Agent is light while idle; playback adds one short FFmpeg transcode plus RTSP session. Measure before treating this as a capacity claim. |
 
@@ -40,7 +40,9 @@ sudo mkdir -p /opt/gaitwatcher /etc/gaitwatcher /var/lib/gaitwatcher
 sudo chown -R "$USER":gaitwatcher /opt/gaitwatcher /var/lib/gaitwatcher
 git clone <your-gaitwatcher-repository-url> /opt/gaitwatcher
 cd /opt/gaitwatcher
-npm ci --include=dev
+# Installs only the Home Agent workspace plus interaction/shared dependencies.
+# It does not install Cloud/Fastify/browser dependencies or perception packages.
+npm ci --workspace @gaitwatcher/home-agent --include=dev
 
 sudo install -m 600 -o root -g gaitwatcher /dev/null /etc/gaitwatcher/home-agent.env
 sudoedit /etc/gaitwatcher/home-agent.env
@@ -52,7 +54,6 @@ Put only these values in `/etc/gaitwatcher/home-agent.env` (use real values; do 
 REOLINK_HOST=
 REOLINK_USERNAME=
 REOLINK_PASSWORD=
-HOME_AGENT_TOKEN=
 HOME_AGENT_ID=dev-home-agent
 HOME_AGENT_DEVICE_ID=living-room-reolink
 HOME_AGENT_CLOUD_URL=wss://<your-test-control-service-host>
@@ -74,7 +75,7 @@ Confirm the E1 Pro emits the generated tone. Then start the existing Home Agent 
 
 ```bash
 set -a; source /etc/gaitwatcher/home-agent.env; set +a
-npm run dev:home-agent
+npm run start --workspace @gaitwatcher/home-agent
 ```
 
 From the remote-control browser, press **Lunch Reminder** and confirm speaker playback plus `completed`. No camera port, ONVIF endpoint, RTSP URL, or router port forwarding is needed; the Pi makes an outbound WSS connection.

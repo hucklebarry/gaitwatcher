@@ -2,6 +2,7 @@
   "name": "gaitwatcher",
   "private": true,
   "type": "module",
+  "workspaces": ["apps/home-agent","apps/remote-control","packages/interaction","packages/shared"],
   "scripts": {
     "dev": "tsx apps/api/src/server.ts",
     "dev:web": "vite --config apps/web/vite.config.ts",
@@ -14,8 +15,8 @@
     "benchmark:temporal": "tsx scripts/temporal-benchmark.ts",
     "reolink:audio-test": "tsx scripts/reolink-audio-test.ts",
     "reolink:audio-duplex-test": "tsx scripts/reolink-audio-duplex-test.ts",
-    "dev:remote-control": "tsx apps/remote-control/src/server.ts",
-    "dev:home-agent": "tsx apps/home-agent/src/main.ts",
+    "dev:remote-control": "npm run start --workspace @gaitwatcher/cloud",
+    "dev:home-agent": "npm run start --workspace @gaitwatcher/home-agent",
     "cost-estimate": "tsx scripts/cost-estimate.ts"
   },
   "dependencies": {

@@ -28,5 +28,6 @@ The active path is `provider → event/media pipeline → perception → semanti
 - [CV and fall-like evaluation findings](docs/cv-perception-findings.md) preserves the benchmark decisions and limitations.
 - [Data and privacy flow](docs/data-flow.md), [validation](docs/validation.md), and [external dataset guidance](data/README.md) cover supporting operational detail.
 - [Reolink outbound-audio spike](docs/spikes/reolink-audio.md) documents the opt-in local hardware experiment.
+- [Pi Home Agent deployment](docs/deployment/raspberry-pi-home-agent.md) and [Render Cloud deployment](docs/deployment/render-cloud.md) document the separate prototype deployables.
 
 The body-state contract is `standing` / `sitting` / `floor_level` / `unknown`. **`floor_level != fall`**; fall-like inference is intentionally deferred.

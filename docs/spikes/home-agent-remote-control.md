@@ -2,13 +2,13 @@
 
 ## Purpose and boundary
 
-This development proof connects a remote browser to the Home Agent by way of a tiny control service. It does not expose the camera, RTSP, ONVIF, or camera credentials to the internet.
+This development proof connects a remote browser to the Home Agent by way of a tiny Cloud control service. It does not expose the camera, RTSP, ONVIF, or camera credentials to the internet. `apps/remote-control` is the Cloud deployment unit; `apps/home-agent` is the Pi deployment unit. They share only hardware-agnostic interaction contracts through `packages/shared`.
 
 ```text
 remote browser → test-control service → outbound Home Agent WebSocket → Reolink E1 Pro speaker
 ```
 
-The control service accepts only a fixed message ID. The Home Agent owns the local Reolink credentials and resolves that ID to a committed prerecorded WAV fixture. It is deliberately beside—not inside—the existing perception/CV pipeline. Both belong in the future Home Agent deployment boundary and will eventually share household/device identity, but neither changes the current observation pipeline.
+The control service accepts only a fixed message ID. The Home Agent owns the local Reolink credentials and resolves that ID to a committed prerecorded MP3 fixture. It is deliberately beside—not inside—the existing perception/CV pipeline. Both belong in the future Home Agent deployment boundary and will eventually share household/device identity, but neither changes the current observation pipeline.
 
 ## What is proven locally
 
@@ -24,20 +24,19 @@ Only these development fixtures may be requested:
 
 | Message ID | Audio fixture |
 | --- | --- |
-| `audio_test` | `fixtures/audio/audio-test.wav` |
-| `lunch_reminder` | `fixtures/audio/lunch-reminder.wav` |
-| `walk_reminder` | `fixtures/audio/walk-reminder.wav` |
-| `family_checkin` | `fixtures/audio/family-checkin.wav` |
+| `audio_test` | `fixtures/audio/audio-test.mp3` |
+| `lunch_reminder` | `fixtures/audio/lunch-reminder.mp3` |
+| `walk_reminder` | `fixtures/audio/walk-reminder.mp3` |
+| `family_checkin` | `fixtures/audio/family-checkin.mp3` |
 
 No remote request can provide a filesystem path or arbitrary speech.
 
 ## Start the local proof
 
-Set the same long random development token in both variables. Camera credentials remain only in the Home Agent's local `.env`.
+Set one long random development token for browser command requests. Camera credentials remain only in the Home Agent's local `.env`; the prototype does not authenticate the outbound agent WebSocket separately.
 
 ```bash
 export REMOTE_CONTROL_TOKEN='long-random-development-token'
-export HOME_AGENT_TOKEN="$REMOTE_CONTROL_TOKEN"
 export HOME_AGENT_ID=dev-home-agent
 export HOME_AGENT_DEVICE_ID=living-room-reolink
 
@@ -68,7 +67,7 @@ Confirm that the E1 Pro audibly plays the lunch phrase and that the browser reac
 
 This is not production authentication or authorization:
 
-- one shared development token authenticates both the browser and Home Agent;
+- one shared development token protects browser command requests only; the agent WebSocket is unauthenticated in this prototype;
 - browser token entry is not persisted, but a tunnel URL must still be treated as sensitive;
 - command status is in memory and is lost on restart;
 - fixed development agent/device IDs are documented rather than managed in a database;

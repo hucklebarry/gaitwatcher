@@ -1,0 +1,1 @@
+{"name":"@gaitwatcher/interaction","private":true,"type":"module","exports":"./src/index.ts","dependencies":{"@gaitwatcher/shared":"file:../shared","rtsp-backchannel":"^0.3.1"}}
