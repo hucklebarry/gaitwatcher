@@ -1,4 +1,5 @@
-import {resolve} from "node:path";
+import {dirname,resolve} from "node:path";
+import {fileURLToPath} from "node:url";
 import {getStreamUris,playFile} from "rtsp-backchannel";
 import {messageCatalog,type InteractionStatus,type MessageId} from "@gaitwatcher/shared";
 
@@ -14,6 +15,7 @@ export class ReolinkInteractiveDevice implements InteractiveDevice{
   const stream=(await getStreamUris({host:this.host,user:this.user,pass:this.pass,deviceUrls,timeoutMs:Number(process.env.REOLINK_TIMEOUT_MS??8000)}))[0];
   if(!stream)throw new Error("camera did not return an RTSP stream URI");
   onStatus("camera_playback_started");
-  await playFile({host:stream.uri,user:this.user,pass:this.pass,file:resolve(file),volume:Number(process.env.REOLINK_AUDIO_VOLUME??0.05),codec:"auto"});
+  const fixture=resolve(dirname(fileURLToPath(import.meta.url)),"../../..",file);
+  await playFile({host:stream.uri,user:this.user,pass:this.pass,file:fixture,volume:Number(process.env.REOLINK_AUDIO_VOLUME??0.05),codec:"auto"});
  }
 }
